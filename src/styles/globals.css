@@ -1,9 +1,16 @@
+/* comment to correctly order imports */
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=optional");
 @import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=optional");
 @import url("react-quill/dist/quill.bubble.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body,
+#__next {
+  height: 100%;
+}
 
 @layer components {
   .vibey {
@@ -25,6 +32,13 @@
 
       transition-all duration-100 scale-0 origin-left
       vibey;
+  }
+
+  .text-input {
+    @apply flex-1 appearance-none border border-black rounded-lg
+      w-full py-2 px-4 bg-transparent shadow-sm
+      text-black placeholder-black text-base
+      focus:outline-none focus:ring-1 focus:ring-white focus:border-transparent;
   }
 }
 .quill {
