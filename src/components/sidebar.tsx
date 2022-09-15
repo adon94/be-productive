@@ -1,7 +1,11 @@
 import { ReactElement } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { PencilIcon, UserIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
+import {
+  ListBulletIcon,
+  PencilIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 type SideIconProps = {
   icon: ReactElement;
@@ -10,13 +14,23 @@ type SideIconProps = {
 };
 
 export default function Sidebar() {
+  const router = useRouter();
   return (
     <div
       className="fixed top-2 left-2 h-screen w-16
       flex flex-col
     text-black"
     >
-      <SideIcon icon={<PencilIcon />} text="Journal" />
+      <SideIcon
+        icon={<PencilIcon />}
+        onClick={() => router.push("/write")}
+        text="New entry..."
+      />
+      <SideIcon
+        icon={<ListBulletIcon />}
+        onClick={() => router.push("/entries")}
+        text="My entries"
+      />
       <LoginBtn />
     </div>
   );
@@ -36,6 +50,7 @@ function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
 
 function LoginBtn() {
   const { data: session } = useSession();
+  const router = useRouter();
   if (session) {
     return (
       <SideIcon
@@ -46,8 +61,10 @@ function LoginBtn() {
     );
   }
   return (
-    <Link href="/login">
-      <SideIcon icon={<UserIcon />} text="Sign in" />
-    </Link>
+    <SideIcon
+      onClick={() => router.push("/login")}
+      icon={<UserIcon />}
+      text="Sign in"
+    />
   );
 }
