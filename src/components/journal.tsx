@@ -32,7 +32,7 @@ export default function Journal({ data }: JournalProps) {
     <div className="w-full h-full flex flex-col items-center">
       {error && error.message}
       {isLoading && <p>Saving...</p>}
-      <div className="flex flex-1 mb-8 w-2/3 bg-white noisy">
+      <div className="flex flex-1 mb-8 w-2/3">
         <JournalEditor value={value} setValue={setValue} />
       </div>
       <Button onClick={addEntry}>Save</Button>

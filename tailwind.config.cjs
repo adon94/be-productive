@@ -6,6 +6,10 @@ module.exports = {
       fontFamily: {
         "indie-flower": ['"Indie Flower"', "cursive"],
       },
+      colors: {
+        desk: "#86D6CB",
+        paper: "#e3cea6",
+      },
     },
   },
   plugins: [],

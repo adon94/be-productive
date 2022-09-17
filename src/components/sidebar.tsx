@@ -19,7 +19,7 @@ export default function Sidebar() {
     <div
       className="fixed top-2 left-2 h-screen w-16
       flex flex-col
-    text-black"
+    text-white"
     >
       <SideIcon
         icon={<PencilIcon />}
@@ -38,10 +38,7 @@ export default function Sidebar() {
 
 function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
   return (
-    <button
-      className="sidebar-icon vibey border-2 border-white group"
-      onClick={onClick}
-    >
+    <button className="sidebar-icon bg-soft group" onClick={onClick}>
       {icon}
       <span className="sidebar-tooltip group-hover:scale-100">{text}</span>
     </button>
