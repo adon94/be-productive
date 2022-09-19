@@ -17,7 +17,8 @@ export default function Sidebar() {
   const router = useRouter();
   return (
     <div
-      className="fixed top-2 left-2 h-screen w-16
+      className="h-screen
+      p-5
       flex flex-col
     text-white"
     >

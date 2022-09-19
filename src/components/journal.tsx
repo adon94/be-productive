@@ -29,7 +29,7 @@ export default function Journal({ data }: JournalProps) {
   }, [data]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
+    <div className="flex flex-grow flex-col items-center mr-16 pr-1 pb-5">
       {error && error.message}
       {isLoading && <p>Saving...</p>}
       <div className="flex flex-1 mb-8 w-2/3">

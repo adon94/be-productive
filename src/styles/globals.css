@@ -18,7 +18,8 @@ body,
 
 @layer components {
   .bg-soft {
-    @apply noisy brightness-125 bg-red-800 text-white
+    @apply noisy brightness-125 bg-red-900 text-white
+      dark:bg-blue-900
       border-2 border-white font-bold font-mono
       hover:scale-105
       transition-all duration-200 ease-linear
@@ -49,7 +50,7 @@ body,
   @apply container w-full h-full;
 }
 .ql-container {
-  @apply font-indie-flower text-2xl text-black
+  @apply font-indie-flower text-2xl text-black dark:text-white
   w-full h-full;
 }
 .ql-editor {
