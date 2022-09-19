@@ -27,22 +27,26 @@ export default function Journal({ jData }: JournalProps) {
       },
     }
   );
-  function addEntry() {
-    if (jData) {
-      mutate({ content: value, id: jData.id });
-    } else {
-      mutate({ content: value });
-    }
-  }
+
   useEffect(() => {
     if (jData) {
       setValue(jData.content);
       setLastValue(jData.content);
+    } else {
+      setValue("");
+      setLastValue("");
     }
   }, [jData]);
 
   const AUTOSAVE_INTERVAL = 2000;
   useEffect(() => {
+    function addEntry() {
+      if (jData) {
+        mutate({ content: value, id: jData.id });
+      } else {
+        mutate({ content: value });
+      }
+    }
     const timer = setTimeout(() => {
       if (lastValue != value) {
         // updateContent({ variables: { content: text, id: chapterId } });
@@ -52,12 +56,7 @@ export default function Journal({ jData }: JournalProps) {
       }
     }, AUTOSAVE_INTERVAL);
     return () => clearTimeout(timer);
-  }, [value, lastValue]);
-
-  useEffect(() => {
-    setValue("");
-    setLastValue("");
-  }, [router.query.eid]);
+  }, [jData, lastValue, mutate, value]);
 
   return (
     <div className="flex flex-grow flex-col items-center py-5">
