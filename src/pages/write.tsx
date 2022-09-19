@@ -21,7 +21,7 @@ const Write: NextPage = () => {
   }
   return (
     <Layout>
-      <Journal data={res?.data} />
+      <Journal jData={res?.data} />
     </Layout>
   );
 };

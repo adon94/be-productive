@@ -13,5 +13,12 @@ type JournalEditorProps = {
 };
 
 export default function JournalEditor({ value, setValue }: JournalEditorProps) {
-  return <ReactQuill theme="bubble" value={value} onChange={setValue} />;
+  return (
+    <ReactQuill
+      theme="bubble"
+      value={value}
+      onChange={setValue}
+      placeholder="Say something..."
+    />
+  );
 }

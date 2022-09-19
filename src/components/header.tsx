@@ -18,7 +18,7 @@ const Header = () => {
     if (currentTheme === "dark") {
       return (
         <SunIcon
-          className="w-10 h-10 text-yellow-500 "
+          className="w-10 h-10 text-yellow-400 "
           role="button"
           onClick={() => setTheme("light")}
         />
@@ -26,7 +26,7 @@ const Header = () => {
     } else {
       return (
         <MoonIcon
-          className="w-10 h-10 text-slate-700"
+          className="w-10 h-10 text-slate-800"
           role="button"
           onClick={() => setTheme("dark")}
         />
@@ -34,10 +34,8 @@ const Header = () => {
     }
   };
   return (
-    <header>
-      <div className="p-5 flex justify-end items-end">
-        {renderThemeChanger()}
-      </div>
+    <header className="fixed top-0 right-0">
+      <div className="p-5">{renderThemeChanger()}</div>
     </header>
   );
 };

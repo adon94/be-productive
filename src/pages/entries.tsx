@@ -17,7 +17,7 @@ function EntryItem({ entry }: EntryItemProps) {
   }
   return (
     <div
-      className="shadow-lg border-2 p-2 font-indie-flower cursor-pointer"
+      className="border-2 border-white h-72 overflow-hidden p-2 font-indie-flower cursor-pointer"
       onClick={openJournal}
     >
       <div dangerouslySetInnerHTML={{ __html: entry.content }} />
@@ -33,7 +33,7 @@ const Entries: NextPage = () => {
     <Layout>
       <div
         className="container grid grid-cols-1 md:grid-cols-3 gap-4 grid-rows-2
-          mx-20 min-h-screen p-4"
+          mx-20 min-h-screen p-5 m-2"
       >
         {journalEntries.data?.map((entry) => (
           <EntryItem entry={entry} key={entry.id} />
