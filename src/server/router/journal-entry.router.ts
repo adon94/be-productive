@@ -48,7 +48,14 @@ export const journalEntryRouter = createRouter()
   })
   .query("journal-entries", {
     resolve({ ctx }) {
-      return ctx.prisma.journalEntry.findMany();
+      if (!ctx.session || !ctx.session.user) {
+        throw new trpc.TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return ctx.prisma.journalEntry.findMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+      });
     },
   })
   .query("single-journal-entry", {
