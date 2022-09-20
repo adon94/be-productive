@@ -55,6 +55,11 @@ export const journalEntryRouter = createRouter()
         where: {
           userId: ctx.session.user.id,
         },
+        orderBy: [
+          {
+            id: "desc",
+          },
+        ],
       });
     },
   })

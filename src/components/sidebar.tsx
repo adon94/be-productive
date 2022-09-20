@@ -18,7 +18,7 @@ export default function Sidebar() {
   return (
     <aside
       className="fixed top-0 left-0 h-screen
-      p-5
+      p-5 z-10
       flex flex-col"
     >
       <div>
@@ -42,13 +42,13 @@ function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
   return (
     <button
       className="relative flex items-center justify-center
-      h-12 w-12 my-2 mx-auto p-2 bg-soft group"
+      h-12 w-12 my-2 mx-auto p-2 bg-soft btn-vibe group hover:shadow-lg"
       onClick={onClick}
     >
       {icon}
       <span
         className="fixed w-auto p-2 m-2 min-w-max left-14
-        text-xs bg-soft brightness-100
+        text-xs bg-soft brightness-100 border-2
         transition-all duration-100 scale-0 origin-left group-hover:scale-100"
       >
         {text}

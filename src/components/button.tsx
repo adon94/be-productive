@@ -4,7 +4,7 @@ export default function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       className="p-4 font-mono
-        bg-soft
+        bg-soft btn-vibe
         transition-all"
       {...props}
     >

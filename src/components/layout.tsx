@@ -18,12 +18,11 @@ const Layout: NextPage<LayoutProps> = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div
-        className="bg-paper dark:bg-slate-900
-          after:noisy
-        "
+        className="bg-paper dark:bg-black after:noisy"
+        id="scrolling-container"
       >
         <Sidebar />
-        <main className="flex w-full h-full min-h-screen m-auto">
+        <main className="flex w-full h-full min-h-screen justify-center">
           {children}
         </main>
         <Header />

@@ -9,9 +9,10 @@ type JournalProps = {
     content: string;
     id: string;
   } | null;
+  handleKeyPress: (arg0: KeyboardEvent) => void;
 };
 
-export default function Journal({ jData }: JournalProps) {
+export default function Journal({ jData, handleKeyPress }: JournalProps) {
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const { mutate, error, isLoading } = trpc.useMutation(
@@ -59,16 +60,20 @@ export default function Journal({ jData }: JournalProps) {
   }, [jData, lastValue, mutate, value]);
 
   return (
-    <div className="flex flex-grow flex-col items-center py-5">
+    <div className="flex flex-grow flex-col items-center pt-5 w-full">
       {error && error.message}
       {/* {isLoading && <p>Saving...</p>} */}
-      <div className="h-4">
+      <div className="fixed right-5 bottom-5 h-4">
         {isLoading && (
-          <CogIcon className="animate-spin text-gray-500 dark:text-gray-400 w-4 h-4" />
+          <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
         )}
       </div>
-      <div className="flex flex-1 mb-8 w-2/3">
-        <JournalEditor value={value} setValue={setValue} />
+      <div className="flex flex-1 w-2/3">
+        <JournalEditor
+          value={value}
+          setValue={setValue}
+          handleKeyPress={handleKeyPress}
+        />
       </div>
     </div>
   );

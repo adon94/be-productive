@@ -10,15 +10,22 @@ const ReactQuill = dynamic(
 type JournalEditorProps = {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
+  handleKeyPress: (arg0: KeyboardEvent) => void;
 };
 
-export default function JournalEditor({ value, setValue }: JournalEditorProps) {
+export default function JournalEditor({
+  value,
+  setValue,
+  handleKeyPress,
+}: JournalEditorProps) {
   return (
     <ReactQuill
       theme="bubble"
       value={value}
       onChange={setValue}
       placeholder="Say something..."
+      scrollingContainer={"#scrolling-container"}
+      onKeyUp={handleKeyPress}
     />
   );
 }
