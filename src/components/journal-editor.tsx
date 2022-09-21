@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { Dispatch, SetStateAction } from "react";
 const ReactQuill = dynamic(
   () => {
     return import("react-quill");
@@ -9,8 +8,8 @@ const ReactQuill = dynamic(
 
 type JournalEditorProps = {
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
-  handleKeyPress: (arg0: KeyboardEvent) => void;
+  setValue: (value: string) => void;
+  handleKeyPress?: (arg0: KeyboardEvent) => void;
 };
 
 export default function JournalEditor({

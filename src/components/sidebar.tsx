@@ -15,6 +15,7 @@ type SideIconProps = {
 
 export default function Sidebar() {
   const router = useRouter();
+  const { data: session } = useSession();
   return (
     <aside
       className="fixed top-0 left-0 h-screen
@@ -27,11 +28,13 @@ export default function Sidebar() {
           onClick={() => router.push("/write")}
           text="New entry..."
         />
-        <SideIcon
-          icon={<ListBulletIcon />}
-          onClick={() => router.push("/entries")}
-          text="My entries"
-        />
+        {session && (
+          <SideIcon
+            icon={<ListBulletIcon />}
+            onClick={() => router.push("/entries")}
+            text="My entries"
+          />
+        )}
         <LoginBtn />
       </div>
     </aside>
@@ -48,7 +51,7 @@ function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
       {icon}
       <span
         className="fixed w-auto p-2 m-2 min-w-max left-14
-        text-xs bg-soft brightness-100 border-2
+        text-xs bg-soft bg-red-800 dark:bg-blue-800 brightness-100 border-2
         transition-all duration-100 scale-0 origin-left group-hover:scale-100"
       >
         {text}
@@ -64,8 +67,8 @@ function LoginBtn() {
     return (
       <SideIcon
         icon={<UserIcon />}
-        text={`Signed in as ${session?.user?.email}`}
-        onClick={signOut}
+        text={`Signed in as ${session.user?.email}`}
+        onClick={() => signOut({ callbackUrl: "/" })}
       />
     );
   }

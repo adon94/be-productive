@@ -15,12 +15,11 @@ body {
     @apply w-full h-full fixed top-0 left-0 pointer-events-none z-20;
   }
   .bg-soft {
-    @apply brightness-125 bg-red-900 text-white
-      dark:bg-blue-900;
+    @apply brightness-125 bg-red-900 hover:bg-red-800 text-white
+      dark:bg-blue-900 hover:dark:bg-blue-800;
   }
   .btn-vibe {
     @apply border-2 border-white font-bold font-mono
-      hover:scale-105
       transition-all duration-200 ease-linear
       cursor-pointer;
   }
@@ -44,4 +43,8 @@ body {
 .ql-editor {
   @apply pt-10 pb-0;
   overflow-y: hidden;
+}
+/* doesn't work yet */
+.ql-editor::placeholder {
+  @apply text-white;
 }

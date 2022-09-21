@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import Journal from "../components/journal";
@@ -13,23 +14,20 @@ const Write: NextPage = () => {
   const bottom = useRef<null | HTMLDivElement>(null);
   const router = useRouter();
   const { eid }: routerParams = router.query;
-  let res;
+  const res = trpc.useQuery(
+    [
+      "journal-entry.single-journal-entry",
+      { journalEntryId: eid || "something" },
+    ],
+    { enabled: Boolean(eid) }
+  );
+  useEffect(() => {
+    if (bottom && bottom.current) {
+      bottom.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [res]);
 
-  if (eid) {
-    res = trpc.useQuery(
-      ["journal-entry.single-journal-entry", { journalEntryId: eid }],
-      {
-        onSuccess: () => {
-          if (bottom && bottom.current) {
-            console.log("scroll into view");
-            bottom.current.scrollIntoView({ behavior: "smooth" });
-          }
-        },
-      }
-    );
-  }
   function handleKeyPress(e: KeyboardEvent) {
-    console.log(e.key);
     if (e.key === "Enter") {
       window.scrollBy(0, 34.078);
     }
@@ -37,9 +35,9 @@ const Write: NextPage = () => {
   return (
     <>
       <Layout>
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col items-center w-full">
           <Journal jData={res?.data} handleKeyPress={handleKeyPress} />
-          <div ref={bottom} className="h-half-screen mx-auto" />
+          <div ref={bottom} className="h-28 mx-auto" />
         </div>
       </Layout>
     </>

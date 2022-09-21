@@ -8,7 +8,7 @@ module.exports = {
         "indie-flower": ['"Indie Flower"', "cursive"],
       },
       colors: {
-        paper: "#f4ede1",
+        paper: "#fff",
       },
     },
   },
