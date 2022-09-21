@@ -44,7 +44,6 @@ body {
   @apply pt-10 pb-0;
   overflow-y: hidden;
 }
-/* doesn't work yet */
-.ql-editor::placeholder {
-  @apply text-white;
+.ql-editor.ql-blank::before {
+  @apply dark:text-gray-400;
 }
