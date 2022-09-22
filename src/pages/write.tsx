@@ -22,10 +22,14 @@ const Write: NextPage = () => {
     { enabled: Boolean(eid) }
   );
   useEffect(() => {
+    scrollToBottom();
+  }, [res]);
+
+  function scrollToBottom() {
     if (bottom && bottom.current) {
       bottom.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [res]);
+  }
 
   function handleKeyPress(e: KeyboardEvent) {
     if (e.key === "Enter") {
@@ -36,7 +40,11 @@ const Write: NextPage = () => {
     <>
       <Layout>
         <div className="flex flex-col items-center w-full">
-          <Journal jData={res?.data} handleKeyPress={handleKeyPress} />
+          <Journal
+            jData={res?.data}
+            handleKeyPress={handleKeyPress}
+            scrollToBottom={scrollToBottom}
+          />
           <div ref={bottom} className="h-28 mx-auto" />
         </div>
       </Layout>

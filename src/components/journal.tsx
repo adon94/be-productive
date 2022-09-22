@@ -11,9 +11,14 @@ type JournalProps = {
     id: string;
   } | null;
   handleKeyPress?: (arg0: KeyboardEvent) => void;
+  scrollToBottom: () => void;
 };
 
-export default function Journal({ jData, handleKeyPress }: JournalProps) {
+export default function Journal({
+  jData,
+  handleKeyPress,
+  scrollToBottom,
+}: JournalProps) {
   const editorRef = useRef<any | null>(null);
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
@@ -49,9 +54,13 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
       const content = window.localStorage.getItem("content");
       if (content) {
         setValue(content);
+        setSaved(true);
+        setTimeout(() => {
+          scrollToBottom();
+        }, 200);
       }
     }
-  }, [session, value]);
+  }, [session, value, scrollToBottom]);
 
   const AUTOSAVE_INTERVAL = 2000;
   useEffect(() => {
@@ -104,14 +113,24 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
     }
   }
 
+  function toggleMind() {
+    const editorEl = window.document.querySelector(".ql-editor");
+    if (editorEl?.classList.contains("hidden-mind")) {
+      editorEl.classList.remove("hidden-mind");
+      scrollToBottom();
+    } else {
+      editorEl?.classList.add("hidden-mind");
+    }
+  }
+
   return (
     <div className="flex flex-grow flex-col pt-5 w-full">
       {error && error.message}
       <div className="fixed right-16 top-5 h-4">
         {!saved && (
-          <div className="h-10 w-10 flex justify-center items-center">
+          <div className="h-10 w-10 flex justify-center items-center fill-gray-400 dark:fill-gray-100">
             <svg height="16" width="16">
-              <circle cx="8" cy="8" r="8" fill="white" />
+              <circle cx="8" cy="8" r="8" fill="inheirit" />
             </svg>
           </div>
         )}
@@ -127,6 +146,7 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
           setValue={onEditorChange}
           handleKeyPress={handleKeyPress}
           save={createNew}
+          toggleMind={toggleMind}
         />
       </div>
     </div>
