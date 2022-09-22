@@ -63,7 +63,9 @@ export default function JournalEditor({
 
   function showOptions(range: any, source: any, editor: any) {
     if (range?.length > 0) {
-      const selection = editor.getText().slice(range.index, range.length);
+      const selection = editor
+        .getText()
+        .slice(range.index, range.index + range.length);
       selRef.current = selection;
     }
   }

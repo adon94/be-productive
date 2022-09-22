@@ -2,7 +2,6 @@ import { CogIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import router from "next/router";
 import { useEffect, useRef, useState } from "react";
-import ReactQuill from "react-quill";
 import { trpc } from "../utils/trpc";
 import JournalEditor from "./journal-editor";
 
@@ -19,6 +18,7 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const [spellcheck, setSpellcheck] = useState(true);
+  const [saved, setSaved] = useState(false);
   const { data: session } = useSession();
   const { mutate, error, isLoading } = trpc.useMutation(
     [`journal-entry.${jData ? "update" : "create"}-journal-entry`],
@@ -43,6 +43,15 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
       setLastValue("");
     }
   }, [jData]);
+
+  useEffect(() => {
+    if (!session && value === "") {
+      const content = window.localStorage.getItem("content");
+      if (content) {
+        setValue(content);
+      }
+    }
+  }, [session, value]);
 
   const AUTOSAVE_INTERVAL = 2000;
   useEffect(() => {
@@ -70,14 +79,27 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
       setSpellcheck(false);
     }
     setValue(content);
+    saved && setSaved(false);
+  }
+
+  function getContents() {
+    if (editorRef.current) {
+      return editorRef.current.getHTML();
+    }
+    return null;
   }
 
   function createNew() {
     if (session && !jData && editorRef?.current) {
-      const editor = editorRef.current.getEditor();
-      const content = editor.getHTML();
+      const content = getContents();
       if (content) {
         mutate({ content });
+      }
+    } else if (editorRef?.current) {
+      const content = getContents();
+      if (content) {
+        window.localStorage.setItem("content", content);
+        setSaved(true);
       }
     }
   }
@@ -85,6 +107,15 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
   return (
     <div className="flex flex-grow flex-col pt-5 w-full">
       {error && error.message}
+      <div className="fixed right-16 top-5 h-4">
+        {!saved && (
+          <div className="h-10 w-10 flex justify-center items-center">
+            <svg height="16" width="16">
+              <circle cx="8" cy="8" r="8" fill="white" />
+            </svg>
+          </div>
+        )}
+      </div>
       <div className="fixed right-5 bottom-5 h-4">
         {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
