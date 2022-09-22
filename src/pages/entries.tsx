@@ -28,8 +28,6 @@ function EntryItem({ entry }: EntryItemProps) {
 
 const Entries: NextPage = () => {
   const journalEntries = trpc.useQuery(["journal-entry.journal-entries"]);
-  console.log({ journalEntries });
-
   return (
     <Layout>
       <div

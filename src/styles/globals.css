@@ -1,5 +1,5 @@
 /* comment to correctly order imports */
-@import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=optional");
+/* @import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=optional"); */
 @import url("react-quill/dist/quill.bubble.css");
 @tailwind base;
 @tailwind components;
@@ -34,16 +34,33 @@ body {
 .quill {
   @apply container w-full h-full;
   overflow-y: hidden;
+  overflow-x: visible;
 }
 .ql-container {
   @apply font-indie-flower text-2xl text-black dark:text-white
   w-full h-full;
   overflow-y: hidden;
+  overflow-x: visible;
+  padding-left: 15%;
+  padding-right: 15%;
 }
 .ql-editor {
   @apply pt-10 pb-0;
   overflow-y: hidden;
+  overflow-x: visible;
 }
 .ql-editor.ql-blank::before {
   @apply dark:text-gray-400;
+  padding-left: 15%;
+  padding-left: 15%;
+}
+
+.ql-toolbar button {
+  width: fit-content !important;
+  height: fit-content !important;
+}
+
+.ql-bubble .ql-tooltip {
+  z-index: 20;
+  width: fit-content !important;
 }

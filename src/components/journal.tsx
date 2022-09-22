@@ -1,7 +1,8 @@
 import { CogIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import router from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import ReactQuill from "react-quill";
 import { trpc } from "../utils/trpc";
 import JournalEditor from "./journal-editor";
 
@@ -14,6 +15,7 @@ type JournalProps = {
 };
 
 export default function Journal({ jData, handleKeyPress }: JournalProps) {
+  const editorRef = useRef<any | null>(null);
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const [spellcheck, setSpellcheck] = useState(true);
@@ -48,8 +50,6 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
       if (session) {
         if (jData) {
           mutate({ content: value, id: jData.id });
-        } else {
-          mutate({ content: value });
         }
       }
     }
@@ -62,17 +62,28 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
     return () => clearTimeout(timer);
   }, [jData, lastValue, mutate, value]);
 
-  function onEditorChange(content: string) {
+  function onEditorChange(content: string, arg0: any, arg1: any, editor: any) {
     if (window && spellcheck) {
-      const editor = window.document.querySelector(".ql-editor");
-      editor?.setAttribute("spellcheck", "false");
+      editorRef.current = editor;
+      const editorEl = window.document.querySelector(".ql-editor");
+      editorEl?.setAttribute("spellcheck", "false");
       setSpellcheck(false);
     }
     setValue(content);
   }
 
+  function createNew() {
+    if (session && !jData && editorRef?.current) {
+      const editor = editorRef.current.getEditor();
+      const content = editor.getHTML();
+      if (content) {
+        mutate({ content });
+      }
+    }
+  }
+
   return (
-    <div className="flex flex-grow flex-col pt-5 w-2/3">
+    <div className="flex flex-grow flex-col pt-5 w-full">
       {error && error.message}
       <div className="fixed right-5 bottom-5 h-4">
         {isLoading && (
@@ -84,6 +95,7 @@ export default function Journal({ jData, handleKeyPress }: JournalProps) {
           value={value}
           setValue={onEditorChange}
           handleKeyPress={handleKeyPress}
+          save={createNew}
         />
       </div>
     </div>

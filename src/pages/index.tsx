@@ -1,14 +1,8 @@
 import type { NextPage } from "next";
-import Layout from "../components/layout";
+import Write from "./write";
 
 const Home: NextPage = () => {
-  return (
-    <Layout>
-      <div className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-        Hello there!
-      </div>
-    </Layout>
-  );
+  return <Write />;
 };
 
 export default Home;

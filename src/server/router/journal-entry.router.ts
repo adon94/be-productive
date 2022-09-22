@@ -5,7 +5,7 @@ import { createRouter } from "./context";
 export const journalEntryRouter = createRouter()
   .mutation("create-journal-entry", {
     input: z.object({
-      content: z.string().min(10),
+      content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
       if (!ctx.session || !ctx.session.user) {

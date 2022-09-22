@@ -1,9 +1,12 @@
 import { ReactElement } from "react";
-import { useSession, signOut } from "next-auth/react";
+import {
+  useSession,
+  // signOut
+} from "next-auth/react";
 import {
   ListBulletIcon,
   PencilIcon,
-  UserIcon,
+  // UserIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 
@@ -25,7 +28,7 @@ export default function Sidebar() {
       <div>
         <SideIcon
           icon={<PencilIcon />}
-          onClick={() => router.push("/write")}
+          onClick={() => router.push("/")}
           text="New entry..."
         />
         {session && (
@@ -35,7 +38,7 @@ export default function Sidebar() {
             text="My entries"
           />
         )}
-        <LoginBtn />
+        {/* <LoginBtn /> */}
       </div>
     </aside>
   );
@@ -60,23 +63,23 @@ function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
   );
 }
 
-function LoginBtn() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  if (session) {
-    return (
-      <SideIcon
-        icon={<UserIcon />}
-        text={`Signed in as ${session.user?.email}`}
-        onClick={() => signOut({ callbackUrl: "/" })}
-      />
-    );
-  }
-  return (
-    <SideIcon
-      onClick={() => router.push("/login")}
-      icon={<UserIcon />}
-      text="Sign in"
-    />
-  );
-}
+// function LoginBtn() {
+//   const { data: session } = useSession();
+//   const router = useRouter();
+//   if (session) {
+//     return (
+//       <SideIcon
+//         icon={<UserIcon />}
+//         text={`Signed in as ${session.user?.email}`}
+//         onClick={() => signOut({ callbackUrl: "/" })}
+//       />
+//     );
+//   }
+//   return (
+//     <SideIcon
+//       onClick={() => router.push("/login")}
+//       icon={<UserIcon />}
+//       text="Sign in"
+//     />
+//   );
+// }
