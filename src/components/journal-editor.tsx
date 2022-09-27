@@ -1,14 +1,35 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import Hotkeys from "./hotkeys";
-import { useHotkeys } from "react-hotkeys-hook";
+// import ShortMenu from "./shortMenu";
+// import { useHotkeys } from "react-hotkeys-hook";
 const ReactQuill = dynamic(
-  () => {
-    return import("react-quill");
+  async () => {
+    const { default: RQ } = await import("react-quill");
+
+    // eslint-disable-next-line react/display-name
+    return function ForwardRef({ forwardedRef, ...props }: any) {
+      return <RQ ref={forwardedRef} {...props} />;
+    };
   },
-  { ssr: false }
+  {
+    ssr: false,
+  }
 );
+
+const placeholder = `The philosophy behind mind-drop is to help people translate the contents of the mind into real world action.
+
+
+
+Because the contents of the mind hold so much personal value, mind-drop will always prioritize privacy.
+
+
+
+That's why all data is stored locally on your machine, accessible only by you.
+
+
+
+I hope to add encrypted server based storage in future so that your written thoughts can be accessible across different devices using a secret key.`;
 
 function genCalLink(title: string) {
   return (
@@ -27,7 +48,7 @@ type JournalEditorProps = {
   setValue: (value: string, arg1: any, arg2: any, arg3: any) => void;
   handleKeyPress?: (arg0: KeyboardEvent) => void;
   save: () => void;
-  toggleMind: () => void;
+  toggleMind?: () => void;
 };
 
 export default function JournalEditor({
@@ -35,12 +56,11 @@ export default function JournalEditor({
   setValue,
   handleKeyPress,
   save,
-  toggleMind,
-}: JournalEditorProps) {
+}: // toggleMind,
+JournalEditorProps) {
+  const quillRef = useRef(null);
   const { setTheme } = useTheme();
-  const [showHotkeys, setShowHotkeys] = useState(false);
-  useHotkeys("esc", () => esc());
-  useHotkeys("cmd+h", () => setShowHotkeys(true));
+  // const [showMenu, setShowMenu] = useState(false);
   const selRef = useRef(null);
   const modules = useMemo(() => {
     return {
@@ -74,32 +94,32 @@ export default function JournalEditor({
               return false;
             },
           },
-          hot: {
-            key: 72,
-            shortKey: true,
-            handler: () => {
-              setShowHotkeys(true);
-            },
-          },
-          actionMode: {
-            key: 190,
-            shortKey: true,
-            handler: () => {
-              toggleMind();
-            },
-          },
-          esc: {
-            key: 27,
-            handler: () => {
-              setShowHotkeys(false);
-            },
-          },
+          // shortMenu: {
+          //   key: 190,
+          //   shortKey: true,
+          //   handler: () => {
+          //     setShowMenu(true);
+          //   },
+          // },
+          // actionMode: {
+          //   key: 72,
+          //   shortKey: true,
+          //   handler: () => {
+          //     toggleMind();
+          //   },
+          // },
+          // esc: {
+          //   key: 27,
+          //   handler: () => {
+          //     setShowMenu(false);
+          //   },
+          // },
         },
       },
     };
   }, []);
 
-  function showOptions(range: any, source: any, editor: any) {
+  function markHighlighted(range: any, source: any, editor: any) {
     if (range?.length > 0) {
       const selection = editor
         .getText()
@@ -108,31 +128,31 @@ export default function JournalEditor({
     }
   }
 
-  function esc() {
-    setShowHotkeys(false);
-  }
-
   useEffect(() => {
-    if (window) {
-      if (!window.localStorage.getItem("content")) {
-        setShowHotkeys(true);
+    const init = (quill: any) => {
+      console.log(quill);
+    };
+    const check = () => {
+      if (quillRef.current) {
+        init(quillRef.current);
+        return;
       }
-    }
-  }, []);
+      setTimeout(check, 200);
+    };
+    check();
+  }, [quillRef]);
 
   return (
-    <>
-      <ReactQuill
-        theme="bubble"
-        value={value}
-        onChange={setValue}
-        onChangeSelection={showOptions}
-        placeholder="Say something..."
-        scrollingContainer={"#scrolling-container"}
-        onKeyUp={handleKeyPress}
-        modules={modules}
-      />
-      <Hotkeys visible={showHotkeys} />
-    </>
+    <ReactQuill
+      theme="bubble"
+      value={value}
+      onChange={setValue}
+      onChangeSelection={markHighlighted}
+      placeholder={placeholder}
+      scrollingContainer={"#scrolling-container"}
+      onKeyUp={handleKeyPress}
+      modules={modules}
+      forwardedRef={quillRef}
+    />
   );
 }

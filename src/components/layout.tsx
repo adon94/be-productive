@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 // import { LightBulbIcon } from "@heroicons/react/24/outline";
-import Sidebar from "../components/sidebar";
+// import Sidebar from "../components/sidebar";
 import Header from "./header";
 
 type LayoutProps = {
@@ -21,7 +21,7 @@ const Layout: NextPage<LayoutProps> = ({ children }) => {
         className="bg-paper dark:bg-black after:noisy"
         id="scrolling-container"
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
         <main className="flex w-full h-full min-h-screen justify-center">
           {children}
         </main>

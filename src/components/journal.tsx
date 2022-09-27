@@ -23,6 +23,7 @@ export default function Journal({
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const [spellcheck, setSpellcheck] = useState(true);
+  const [localStorage, setLocalStorage] = useState(true);
   const [saved, setSaved] = useState(false);
   const { data: session } = useSession();
   const { mutate, error, isLoading } = trpc.useMutation(
@@ -54,6 +55,7 @@ export default function Journal({
       const content = window.localStorage.getItem("content");
       if (content) {
         setValue(content);
+        setLocalStorage(true);
         setSaved(true);
         setTimeout(() => {
           scrollToBottom();
@@ -69,6 +71,8 @@ export default function Journal({
         if (jData) {
           mutate({ content: value, id: jData.id });
         }
+      } else if (localStorage) {
+        saveDoc();
       }
     }
     const timer = setTimeout(() => {
@@ -98,7 +102,7 @@ export default function Journal({
     return null;
   }
 
-  function createNew() {
+  function saveDoc() {
     if (session && !jData && editorRef?.current) {
       const content = getContents();
       if (content) {
@@ -136,6 +140,7 @@ export default function Journal({
         )}
       </div>
       <div className="fixed right-5 bottom-5 h-4">
+        <p className="text-gray-700 dark:text-gray-400 text-sm">⌘ + .</p>
         {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
         )}
@@ -145,7 +150,7 @@ export default function Journal({
           value={value}
           setValue={onEditorChange}
           handleKeyPress={handleKeyPress}
-          save={createNew}
+          save={saveDoc}
           toggleMind={toggleMind}
         />
       </div>
