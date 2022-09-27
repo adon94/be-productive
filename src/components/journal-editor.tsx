@@ -147,6 +147,8 @@ JournalEditorProps) {
       onKeyUp={handleKeyPress}
       modules={modules}
       forwardedRef={quillRef}
+      type="text"
+      autocapitalize="on"
     />
   );
 }
