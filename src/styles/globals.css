@@ -38,11 +38,11 @@ body {
 }
 .ql-container {
   @apply font-indie-flower text-2xl text-black dark:text-white
-  w-full h-full;
+  w-full h-full md:px-[15%];
   overflow-y: hidden;
   overflow-x: visible;
-  padding-left: 15%;
-  padding-right: 15%;
+  /* padding-left: 15%;
+  padding-right: 15%; */
 }
 .ql-editor {
   @apply pt-10 pb-0;
@@ -50,9 +50,9 @@ body {
   overflow-x: visible;
 }
 .ql-editor.ql-blank::before {
-  @apply dark:text-gray-400;
-  padding-left: 15%;
-  padding-left: 15%;
+  @apply dark:text-gray-400 md:px-[15%];
+  /* padding-left: 15%;
+  padding-left: 15%; */
 }
 
 .ql-toolbar button {

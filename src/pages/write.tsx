@@ -45,7 +45,7 @@ const Write: NextPage = () => {
             handleKeyPress={handleKeyPress}
             scrollToBottom={scrollToBottom}
           />
-          <div ref={bottom} className="h-28 mx-auto" />
+          <div ref={bottom} className="h-0 md:h-28 mx-auto" />
         </div>
       </Layout>
     </>
