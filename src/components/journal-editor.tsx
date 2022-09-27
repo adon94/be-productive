@@ -19,17 +19,11 @@ const ReactQuill = dynamic(
 
 const placeholder = `The philosophy behind mind-drop is to help people translate the contents of the mind into real world action.
 
-
-
 Because the contents of the mind hold so much personal value, mind-drop will always prioritize privacy.
 
+That's why all saved data is stored locally on your browser, accessible only by you.
 
-
-That's why all data is stored locally on your machine, accessible only by you.
-
-
-
-I hope to add encrypted server based storage in future so that your written thoughts can be accessible across different devices using a secret key.`;
+To begin, just start writing.`;
 
 function genCalLink(title: string) {
   return (

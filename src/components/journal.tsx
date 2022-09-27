@@ -1,4 +1,4 @@
-import { CogIcon } from "@heroicons/react/24/outline";
+// import { CogIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import router from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -26,7 +26,8 @@ export default function Journal({
   const [localStorage, setLocalStorage] = useState(true);
   const [saved, setSaved] = useState(false);
   const { data: session } = useSession();
-  const { mutate, error, isLoading } = trpc.useMutation(
+  const { mutate, error } = trpc.useMutation(
+    // isLoading
     [`journal-entry.${jData ? "update" : "create"}-journal-entry`],
     {
       onSuccess: (data) => {
@@ -139,12 +140,12 @@ export default function Journal({
           </div>
         )}
       </div>
-      <div className="fixed right-5 bottom-5 h-4">
+      {/* <div className="fixed right-5 bottom-5 h-4">
         <p className="text-gray-700 dark:text-gray-400 text-sm">⌘ + .</p>
         {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
         )}
-      </div>
+      </div> */}
       <div className="flex flex-1 w-full">
         <JournalEditor
           value={value}
