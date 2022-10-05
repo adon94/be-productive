@@ -45,19 +45,19 @@ export default function Journal({
   );
 
   const saveDoc = useCallback(() => {
-    if (session && !jData && editorRef?.current) {
-      const content = getContents();
-      if (content) {
-        mutate({ content });
-      }
-    } else if (editorRef?.current) {
+    // if (session && !jData && editorRef?.current) {
+    //   const content = getContents();
+    //   if (content) {
+    //     mutate({ content });
+    //   }
+    if (editorRef?.current) {
       const content = getContents();
       if (content) {
         window.localStorage.setItem("content", content);
         setSaved(true);
       }
     }
-  }, [jData, mutate, session]);
+  }, []);
 
   useEffect(() => {
     if (jData) {
@@ -141,9 +141,9 @@ export default function Journal({
   return (
     <div className="flex flex-grow flex-col w-full">
       {error && error.message}
-      <div className="fixed right-16 top-5 h-4">
+      <div className="fixed right-5 top-5 h-4">
         {!saved && (
-          <div className="h-10 w-10 flex justify-center items-center fill-gray-400 dark:fill-gray-100">
+          <div className="h-10 w-10 flex justify-center items-center fill-gray-300 dark:fill-gray-100">
             <svg height="16" width="16">
               <circle cx="8" cy="8" r="8" fill="inheirit" />
             </svg>
@@ -151,7 +151,7 @@ export default function Journal({
         )}
       </div>
       <div className="fixed right-5 bottom-5 h-4">
-        <p className="text-gray-700 dark:text-gray-400 text-sm">⌘+.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">⌘+.</p>
         {/* {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
         )} */}

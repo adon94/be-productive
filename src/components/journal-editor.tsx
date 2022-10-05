@@ -43,7 +43,7 @@ export default function JournalEditor({
   value,
   setValue,
   handleKeyPress,
-  // save,
+  save,
   scrollToBottom,
 }: // toggleMind,
 JournalEditorProps) {
@@ -70,14 +70,14 @@ JournalEditorProps) {
       toolbar: false,
       keyboard: {
         bindings: {
-          // save: {
-          //   key: 83,
-          //   shortKey: true,
-          //   handler: () => {
-          //     save();
-          //     return false;
-          //   },
-          // },
+          save: {
+            key: 83,
+            shortKey: true,
+            handler: () => {
+              save();
+              return false;
+            },
+          },
           gCal: {
             key: 71,
             shortKey: true,
@@ -117,7 +117,7 @@ JournalEditorProps) {
         },
       },
     };
-  }, [setTheme]);
+  }, [setTheme, save]);
 
   function markHighlighted(
     range: Range,

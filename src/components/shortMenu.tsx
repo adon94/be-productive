@@ -124,6 +124,9 @@ export default function ShortMenu({
             <MenuItem onClick={() => setShowHelp(true)} id="menu-item-2">
               Help...
             </MenuItem>
+            <MenuItem onClick={close} id="menu-item-3">
+              Exit
+            </MenuItem>
           </div>
         </div>
       ) : (
@@ -133,7 +136,7 @@ export default function ShortMenu({
         bg-white dark:bg-black
         text-black dark:text-white text-lg p-10"
         >
-          MindDrop is designed to be used without a mouse!
+          mind drop is designed to be used without a mouse!
           <br />
           <ul>
             <li>
