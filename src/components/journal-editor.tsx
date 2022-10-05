@@ -1,21 +1,9 @@
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-// import ShortMenu from "./shortMenu";
-// import { useHotkeys } from "react-hotkeys-hook";
-const ReactQuill = dynamic(
-  async () => {
-    const { default: RQ } = await import("react-quill");
-
-    // eslint-disable-next-line react/display-name
-    return function ForwardRef({ forwardedRef, ...props }: any) {
-      return <RQ ref={forwardedRef} {...props} />;
-    };
-  },
-  {
-    ssr: false,
-  }
-);
+import { useHotkeys } from "react-hotkeys-hook";
+import ReactQuill, { Range } from "react-quill";
+import ShortMenu from "./shortMenu";
 
 const placeholder = `The philosophy behind mind-drop is to help people translate the contents of the mind into real world action.
 
@@ -39,36 +27,57 @@ function genCalLink(title: string) {
 
 type JournalEditorProps = {
   value: string;
-  setValue: (value: string, arg1: any, arg2: any, arg3: any) => void;
+  setValue: (
+    value: string,
+    delta: unknown,
+    source: unknown,
+    editor: ReactQuill.UnprivilegedEditor
+  ) => void;
   handleKeyPress?: (arg0: KeyboardEvent) => void;
   save: () => void;
   toggleMind?: () => void;
+  scrollToBottom: () => void;
 };
 
 export default function JournalEditor({
   value,
   setValue,
   handleKeyPress,
-  save,
+  // save,
+  scrollToBottom,
 }: // toggleMind,
 JournalEditorProps) {
-  const quillRef = useRef(null);
+  const quillRef = useRef<ReactQuill>(null);
   const { setTheme } = useTheme();
-  // const [showMenu, setShowMenu] = useState(false);
-  const selRef = useRef(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [filtered, setFiltered] = useState<string | null>(null);
+  const selRef = useRef<string | null>(null);
+  useHotkeys("command+.", () => {
+    if (showMenu) closeMenu();
+    else setShowMenu(true);
+  });
+  useHotkeys("escape", () => {
+    setShowMenu(false);
+    closeMenu();
+  });
+  useHotkeys("command+d", (e) => {
+    e.preventDefault();
+    const theme = localStorage.getItem("theme");
+    setTheme(theme === "dark" ? "light" : "dark");
+  });
   const modules = useMemo(() => {
     return {
       toolbar: false,
       keyboard: {
         bindings: {
-          save: {
-            key: 83,
-            shortKey: true,
-            handler: () => {
-              save();
-              return false;
-            },
-          },
+          // save: {
+          //   key: 83,
+          //   shortKey: true,
+          //   handler: () => {
+          //     save();
+          //     return false;
+          //   },
+          // },
           gCal: {
             key: 71,
             shortKey: true,
@@ -88,33 +97,34 @@ JournalEditorProps) {
               return false;
             },
           },
-          // shortMenu: {
-          //   key: 190,
-          //   shortKey: true,
-          //   handler: () => {
-          //     setShowMenu(true);
-          //   },
-          // },
-          // actionMode: {
-          //   key: 72,
-          //   shortKey: true,
-          //   handler: () => {
-          //     toggleMind();
-          //   },
-          // },
-          // esc: {
-          //   key: 27,
-          //   handler: () => {
-          //     setShowMenu(false);
-          //   },
-          // },
+          todo: {
+            key: 32,
+            collapsed: true,
+            format: { todo: false },
+            prefix: /^>$/,
+            offset: 1,
+            handler: (range: Range) => {
+              insertTodo(range);
+            },
+          },
+          shortMenu: {
+            key: 190,
+            shortKey: true,
+            handler: () => {
+              setShowMenu(true);
+            },
+          },
         },
       },
     };
-  }, []);
+  }, [setTheme]);
 
-  function markHighlighted(range: any, source: any, editor: any) {
-    if (range?.length > 0) {
+  function markHighlighted(
+    range: Range,
+    source: unknown,
+    editor: { getText: () => string }
+  ) {
+    if (range && range.length > 0) {
       const selection = editor
         .getText()
         .slice(range.index, range.index + range.length);
@@ -123,8 +133,12 @@ JournalEditorProps) {
   }
 
   useEffect(() => {
-    const init = (quill: any) => {
-      console.log(quill);
+    const init = async (quill: ReactQuill) => {
+      quill.focus();
+      if (quill?.editor) {
+        const lastIndex = quill.editor.getText().length;
+        quill.editor.setSelection({ index: lastIndex, length: 0 });
+      }
     };
     const check = () => {
       if (quillRef.current) {
@@ -136,19 +150,58 @@ JournalEditorProps) {
     check();
   }, [quillRef]);
 
+  useEffect(() => {
+    if (filtered === null) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 500);
+    }
+  }, [filtered, scrollToBottom]);
+
+  function formatAsTodo(range: Range) {
+    if (range) {
+      const ed = quillRef?.current?.getEditor();
+      console.log("formatting");
+      ed?.formatLine(range.index, 1, { list: "unchecked" });
+    }
+  }
+
+  function insertTodo(range: Range) {
+    // if (!range) range = quillRef?.current?.getSelection();
+    if (range) {
+      const ed = quillRef?.current?.getEditor();
+      ed?.deleteText(range.index - 1, 1);
+      ed?.formatLine(range.index - 1, 1, { list: "unchecked" });
+    }
+  }
+
+  function closeMenu() {
+    setShowMenu(false);
+    quillRef?.current?.focus();
+  }
+
   return (
-    <ReactQuill
-      theme="bubble"
-      value={value}
-      onChange={setValue}
-      onChangeSelection={markHighlighted}
-      placeholder={placeholder}
-      scrollingContainer={"#scrolling-container"}
-      onKeyUp={handleKeyPress}
-      modules={modules}
-      forwardedRef={quillRef}
-      type="text"
-      autocapitalize="on"
-    />
+    <>
+      <ReactQuill
+        theme="bubble"
+        value={value}
+        onChange={setValue}
+        onChangeSelection={markHighlighted}
+        placeholder={placeholder}
+        scrollingContainer={"#scrolling-container"}
+        onKeyUp={handleKeyPress}
+        modules={modules}
+        ref={quillRef}
+      />
+      {showMenu && (
+        <ShortMenu
+          filtered={filtered}
+          setFiltered={setFiltered}
+          visible={showMenu}
+          close={closeMenu}
+          addToDo={formatAsTodo}
+        />
+      )}
+    </>
   );
 }

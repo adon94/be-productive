@@ -1,95 +1,164 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ButtonHTMLAttributes,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Range } from "react-quill";
 
 type Props = {
-  addToDo: () => void;
+  close: () => void;
+  filtered: null | string;
+  setFiltered: (arg: string | null) => void;
+  addToDo: (range: Range) => void;
+  visible: boolean;
 };
 
-export default function ShortMenu({ addToDo }: Props) {
-  const firstRef = useRef<any>(null);
-  const [focus, setFocus] = useState(0);
+function MenuItem(props: ButtonHTMLAttributes<HTMLElement>) {
+  return (
+    <button
+      className="w-full block px-4 py-2 text-lg text-left font-mono
+        focus:bg-red-500 dark:focus:bg-blue-700 focus:outline-none focus:text-white"
+      role="menuitem"
+      tabIndex={-1}
+      {...props}
+    ></button>
+  );
+}
 
-  const onKeyDown = useCallback((e: KeyboardEvent) => {
-    console.log(e.key);
-    if (firstRef && firstRef.current) {
-      if (e.key == "ArrowDown") {
-        firstRef.current.children[focus + 1].focus();
-        setFocus((current) => current + 1);
-        console.log("fcus", focus);
+export default function ShortMenu({
+  // addToDo,
+  close,
+  visible,
+  filtered,
+  setFiltered,
+}: Props) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const focus = useRef(0);
+  const [showHelp, setShowHelp] = useState(false);
+
+  function shiftFocus() {
+    const firstItem = menuRef?.current?.children[focus.current] as HTMLElement;
+    firstItem?.focus();
+  }
+
+  const onKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (menuRef?.current) {
+        const length = menuRef.current.children.length;
+        if (visible && menuRef && menuRef.current) {
+          switch (e.key) {
+            case "ArrowDown":
+              e.preventDefault();
+              if (focus.current !== length - 1) focus.current += 1;
+              else focus.current = 0;
+              shiftFocus();
+              break;
+            case "ArrowUp":
+              e.preventDefault();
+              if (focus.current !== 0) focus.current -= 1;
+              else focus.current = length - 1;
+              shiftFocus();
+              break;
+            case "Escape":
+              e.preventDefault();
+              console.log("esc");
+              window.document.onkeydown = null;
+              close();
+            default:
+              break;
+          }
+        }
       }
-    }
-  }, []);
+    },
+    [close, visible]
+  );
 
   useEffect(() => {
-    if (firstRef && firstRef.current) {
-      firstRef.current.children[0].focus();
+    if (visible && menuRef && menuRef.current) {
+      const firstItem = menuRef.current.children[0] as HTMLElement;
+      firstItem?.focus();
       window.document.onkeydown = onKeyDown;
     }
-  }, []);
+    return () => {
+      window.document.onkeydown = null;
+    };
+  }, [visible, onKeyDown]);
+
+  function filterToDos() {
+    const editorEl = window.document.querySelector(".ql-editor");
+    if (editorEl?.classList.contains("hidden-mind")) {
+      editorEl.classList.remove("hidden-mind");
+      setFiltered(null);
+    } else {
+      editorEl?.classList.add("hidden-mind");
+      setFiltered("actionable");
+    }
+    close();
+  }
 
   return (
-    <div className="fixed top-0 left-0 w-screen mx-auto h-screen flex justify-center items-center">
-      <div
-        className="z-10 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby="menu-button"
-        tabIndex={-1}
-      >
-        <div className="py-1" role="none" ref={firstRef}>
-          <button
-            onClick={addToDo}
-            className="text-gray-700 block px-4 py-2 text-sm"
-            role="menuitem"
-            tabIndex={-1}
-            id="menu-item-0"
-          >
-            Actionable
-          </button>
-          <a
-            href="#"
-            className="text-gray-700 block px-4 py-2 text-sm"
-            role="menuitem"
-            tabIndex={-1}
-            id="menu-item-1"
-          >
-            Support
-          </a>
-          <a
-            href="#"
-            className="text-gray-700 block px-4 py-2 text-sm"
-            role="menuitem"
-            tabIndex={-1}
-            id="menu-item-2"
-          >
-            License
-          </a>
-          <form method="POST" action="#" role="none">
-            <button
-              type="submit"
-              className="text-gray-700 block w-full px-4 py-2 text-left text-sm"
-              role="menuitem"
-              tabIndex={-1}
-              id="menu-item-3"
-            >
-              Sign out
-            </button>
-          </form>
+    <div
+      className="fixed w-full h-full flex justify-center items-center bg-black bg-opacity-50"
+      // onClick={close}
+    >
+      {!showHelp ? (
+        <div
+          className="z-10 w-1/4
+        bg-gray-100 border-2 border-red-500
+        dark:border-blue-700 dark:text-white dark:bg-slate-800
+        ring-1 ring-black ring-opacity-5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabIndex={-1}
+        >
+          <div className="py-0 flex flex-col" role="none" ref={menuRef}>
+            {/* <MenuItem onClick={addToDo} id="menu-item-0">
+              To do
+            </MenuItem> */}
+            <MenuItem onClick={filterToDos} id="menu-item-1">
+              {filtered === "actionable" ? "Show all" : "Show actionable"}
+            </MenuItem>
+            <MenuItem onClick={() => setShowHelp(true)} id="menu-item-2">
+              Help...
+            </MenuItem>
+          </div>
         </div>
-      </div>
-      {/* <div className="h-2/3 w-2/3 font-mono bg-red-600 dark:bg-blue-700 text-lg border-2 p-10">
-        Hotkeys:
-        <ul>
-          <li>cmd+h - show hotkeys window</li>
-          <li>cmd+s - save locally</li>
-          <li>cmd+d - toggle darkmode</li>
-          <li>cmd+g - add highlighted text to Google Calendar</li>
-          <li>cmd+. - show only actionable items</li>
-          <li>
-            (Start a newline with - and a space to create an actionable item)
-          </li>
-          <li>esc - close this window</li>
-        </ul>
-      </div> */}
+      ) : (
+        <div
+          className="h-2/3 w-2/3 font-mono border-2 
+        border-red-600 dark:border-blue-700
+        bg-white dark:bg-black
+        text-black dark:text-white text-lg p-10"
+        >
+          MindDrop is designed to be used without a mouse!
+          <br />
+          <ul>
+            <li>
+              <b>cmd</b>+<b>.</b> - show menu
+            </li>
+            {/* <li>
+              <b>cmd+s</b> - save locally (saves automatically after 3 seconds)
+            </li> */}
+            <li>
+              <b>cmd</b>+<b>d</b> - toggle darkmode
+            </li>
+            <li>
+              <b>cmd</b>+<b>g</b> - add highlighted text to Google Calendar
+            </li>
+            <li>
+              <b>esc</b> - close this window
+            </li>
+            <br />
+            <li>
+              Start a newline with <b>&gt;</b>+<b>space</b> to create an action
+              item
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

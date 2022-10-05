@@ -1,9 +1,12 @@
 // import { CogIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import router from "next/router";
-import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
-import JournalEditor from "./journal-editor";
+import ReactQuill, { UnprivilegedEditor } from "react-quill";
+
+const JournalEditor = dynamic(() => import("./journal-editor"), { ssr: false });
 
 type JournalProps = {
   jData?: {
@@ -19,7 +22,7 @@ export default function Journal({
   handleKeyPress,
   scrollToBottom,
 }: JournalProps) {
-  const editorRef = useRef<any | null>(null);
+  const editorRef = useRef<UnprivilegedEditor | null>(null);
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const [spellcheck, setSpellcheck] = useState(true);
@@ -40,6 +43,21 @@ export default function Journal({
       },
     }
   );
+
+  const saveDoc = useCallback(() => {
+    if (session && !jData && editorRef?.current) {
+      const content = getContents();
+      if (content) {
+        mutate({ content });
+      }
+    } else if (editorRef?.current) {
+      const content = getContents();
+      if (content) {
+        window.localStorage.setItem("content", content);
+        setSaved(true);
+      }
+    }
+  }, [jData, mutate, session]);
 
   useEffect(() => {
     if (jData) {
@@ -83,9 +101,14 @@ export default function Journal({
       }
     }, AUTOSAVE_INTERVAL);
     return () => clearTimeout(timer);
-  }, [jData, lastValue, mutate, value]);
+  }, [jData, lastValue, mutate, value, localStorage, session, saveDoc]);
 
-  function onEditorChange(content: string, arg0: any, arg1: any, editor: any) {
+  function onEditorChange(
+    content: string,
+    delta: unknown,
+    source: unknown,
+    editor: ReactQuill.UnprivilegedEditor
+  ) {
     if (window && spellcheck) {
       editorRef.current = editor;
       const editorEl = window.document.querySelector(".ql-editor");
@@ -98,24 +121,11 @@ export default function Journal({
 
   function getContents() {
     if (editorRef.current) {
-      return editorRef.current.getHTML();
+      // note: check if getHTML() should exist on type ReactQuill.
+      const editor = editorRef.current as unknown as { getHTML: () => string };
+      return editor.getHTML();
     }
     return null;
-  }
-
-  function saveDoc() {
-    if (session && !jData && editorRef?.current) {
-      const content = getContents();
-      if (content) {
-        mutate({ content });
-      }
-    } else if (editorRef?.current) {
-      const content = getContents();
-      if (content) {
-        window.localStorage.setItem("content", content);
-        setSaved(true);
-      }
-    }
   }
 
   function toggleMind() {
@@ -129,7 +139,7 @@ export default function Journal({
   }
 
   return (
-    <div className="flex flex-grow flex-col pt-5 w-full">
+    <div className="flex flex-grow flex-col w-full">
       {error && error.message}
       <div className="fixed right-16 top-5 h-4">
         {!saved && (
@@ -140,12 +150,12 @@ export default function Journal({
           </div>
         )}
       </div>
-      {/* <div className="fixed right-5 bottom-5 h-4">
-        <p className="text-gray-700 dark:text-gray-400 text-sm">⌘ + .</p>
-        {isLoading && (
+      <div className="fixed right-5 bottom-5 h-4">
+        <p className="text-gray-700 dark:text-gray-400 text-sm">⌘+.</p>
+        {/* {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
-        )}
-      </div> */}
+        )} */}
+      </div>
       <div className="flex flex-1 w-full">
         <JournalEditor
           value={value}
@@ -153,6 +163,7 @@ export default function Journal({
           handleKeyPress={handleKeyPress}
           save={saveDoc}
           toggleMind={toggleMind}
+          scrollToBottom={scrollToBottom}
         />
       </div>
     </div>
