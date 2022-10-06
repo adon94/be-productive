@@ -48,13 +48,13 @@ function SideIcon({ icon, text = "tooltip", onClick }: SideIconProps) {
   return (
     <button
       className="relative flex items-center justify-center
-      h-12 w-12 my-2 mx-auto p-2 bg-soft btn-vibe group hover:shadow-lg"
+      h-12 w-12 my-2 mx-auto p-2 primary-color btn-vibe group hover:shadow-lg"
       onClick={onClick}
     >
       {icon}
       <span
         className="fixed w-auto p-2 m-2 min-w-max left-14
-        text-xs bg-soft bg-red-800 dark:bg-blue-800 brightness-100 border-2
+        text-xs primary-color bg-red-800 dark:bg-blue-800 brightness-100 border-2
         transition-all duration-100 scale-0 origin-left group-hover:scale-100"
       >
         {text}

@@ -18,8 +18,8 @@ type Props = {
 function MenuItem(props: ButtonHTMLAttributes<HTMLElement>) {
   return (
     <button
-      className="w-full block px-4 py-2 text-lg text-left font-mono
-        focus:bg-red-500 dark:focus:bg-blue-700 focus:outline-none focus:text-white"
+      className="w-full block px-4 py-2 text-lg text-left font-uncial-antiqua
+        focus:bg-primary focus:outline-none focus:text-white"
       role="menuitem"
       tabIndex={-1}
       {...props}
@@ -106,15 +106,18 @@ export default function ShortMenu({
       {!showHelp ? (
         <div
           className="z-10 w-1/4
-        bg-gray-100 border-2 border-red-500
-        dark:border-blue-700 dark:text-white dark:bg-slate-800
+        bg-main border-primary rounded-md
         ring-1 ring-black ring-opacity-5 focus:outline-none"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           tabIndex={-1}
         >
-          <div className="py-0 flex flex-col" role="none" ref={menuRef}>
+          <div
+            className="py-0 flex flex-col overflow-hidden"
+            role="none"
+            ref={menuRef}
+          >
             {/* <MenuItem onClick={addToDo} id="menu-item-0">
               To do
             </MenuItem> */}
@@ -131,10 +134,8 @@ export default function ShortMenu({
         </div>
       ) : (
         <div
-          className="h-2/3 w-2/3 font-mono border-2 
-        border-red-600 dark:border-blue-700
-        bg-white dark:bg-black
-        text-black dark:text-white text-lg p-10"
+          className="h-2/3 w-2/3 border bg-main
+            border-primary text-lg p-10 font-mono"
         >
           mind drop is designed to be used without a mouse!
           <br />

@@ -18,7 +18,7 @@ function EntryItem({ entry }: EntryItemProps) {
   return (
     <div
       className="border-2 border-white h-72 overflow-hidden p-2 font-indie-flower cursor-pointer
-        transition-all duration-100 bg-paper dark:bg-black hover:bg-soft"
+        transition-all duration-100 bg-paper dark:bg-black hover:primary-color"
       onClick={openJournal}
     >
       <div dangerouslySetInnerHTML={{ __html: entry.content }} />

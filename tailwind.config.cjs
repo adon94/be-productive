@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         "indie-flower": ['"Indie Flower"'],
+        "uncial-antiqua": ['"Uncial Antiqua"'],
       },
       colors: {
         paper: "#fff",
