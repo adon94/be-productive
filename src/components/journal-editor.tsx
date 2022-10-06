@@ -179,7 +179,7 @@ JournalEditorProps) {
     setShowMenu(false);
     quillRef?.current?.focus();
   }
-
+  console.log(showMenu);
   return (
     <>
       <ReactQuill

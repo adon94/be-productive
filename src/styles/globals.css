@@ -11,10 +11,6 @@
   font-style: normal;
 }
 
-body {
-  @apply dark:bg-black;
-}
-
 @layer components {
   .background-none {
     background: none;
@@ -29,14 +25,13 @@ body {
       dark:bg-blue-900 hover:dark:bg-blue-800;
   }
   .bg-primary {
-    @apply bg-black/75 dark:bg-green-700;
+    @apply bg-green-900 dark:bg-green-700;
   }
   .border-primary {
-    @apply border border-black/75 dark:border-green-700;
+    @apply border border-green-900 dark:border-green-700;
   }
   .pattern-dark {
     background-image: url("/patterns/black_linen_v2.png");
-    /* filter: sepia(10%); */
     background-blend-mode: normal;
   }
   .pattern-light {
@@ -60,6 +55,10 @@ body {
   .h-half-screen {
     height: 50vh;
   }
+}
+body {
+  @apply bg-main;
+  /* background-color: wheat; */
 }
 .quill {
   @apply container w-full h-full;

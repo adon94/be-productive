@@ -48,6 +48,7 @@ export default function ShortMenu({
       if (menuRef?.current) {
         const length = menuRef.current.children.length;
         if (visible && menuRef && menuRef.current) {
+          console.log("visible");
           switch (e.key) {
             case "ArrowDown":
               e.preventDefault();
@@ -66,6 +67,17 @@ export default function ShortMenu({
               console.log("esc");
               window.document.onkeydown = null;
               close();
+              break;
+            case ".":
+              if (e.metaKey) {
+                e.preventDefault();
+                console.log("cmd+.");
+                if (showHelp) {
+                  setShowHelp(false);
+                } else if (visible) {
+                  close();
+                }
+              }
             default:
               break;
           }
@@ -79,7 +91,9 @@ export default function ShortMenu({
     if (visible && menuRef && menuRef.current) {
       const firstItem = menuRef.current.children[0] as HTMLElement;
       firstItem?.focus();
-      window.document.onkeydown = onKeyDown;
+      setTimeout(() => {
+        window.document.onkeydown = onKeyDown;
+      }, 100);
     }
     return () => {
       window.document.onkeydown = null;
@@ -122,7 +136,9 @@ export default function ShortMenu({
               To do
             </MenuItem> */}
             <MenuItem onClick={filterToDos} id="menu-item-1">
-              {filtered === "actionable" ? "Show all" : "Show actionable"}
+              {filtered === "actionable"
+                ? "Show Everything"
+                : "Filter Actionable"}
             </MenuItem>
             <MenuItem onClick={() => setShowHelp(true)} id="menu-item-2">
               Help...
@@ -137,7 +153,10 @@ export default function ShortMenu({
           className="h-2/3 w-2/3 border bg-main
             border-primary text-lg p-10 font-mono"
         >
-          mind drop is designed to be used without a mouse!
+          mind drop is designed to be used without a mouse 🎉
+          <br />
+          try these shortcuts:
+          <br />
           <br />
           <ul>
             <li>
@@ -157,8 +176,8 @@ export default function ShortMenu({
             </li>
             <br />
             <li>
-              Start a newline with <b>&gt;</b>+<b>space</b> to create an action
-              item
+              start a newline with <b>&gt;</b>+<b>space</b> to create an action
+              item.
             </li>
           </ul>
         </div>
