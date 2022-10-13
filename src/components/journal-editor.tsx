@@ -1,8 +1,8 @@
 // import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
-import ReactQuill, { Range } from "react-quill";
+import ReactQuill, { Quill, Range } from "react-quill";
 import ShortMenu from "./shortMenu";
 
 const placeholder = `The philosophy behind mind-drop is to help people translate the contents of the mind into real world action.
@@ -25,6 +25,33 @@ function genCalLink(title: string) {
   );
 }
 
+const Inline = Quill.import("blots/inline");
+
+class Stamped extends Inline {
+  static create() {
+    const node = super.create();
+    node.setAttribute("updated", new Date().toTimeString());
+    console.log(new Date().toTimeString());
+    return node;
+  }
+
+  static formats(node: HTMLElement) {
+    // We will only be called with a node already
+    // determined to be a Link blot, so we do
+    // not need to check ourselves
+    console.log("node", node);
+    // return node.setAttribute("updated", new Date().toTimeString());
+    // console.log("node", node);
+    return node.getAttribute("updated");
+  }
+  format() {
+    console.log("domNode");
+    this.domNode.setAttribute("updated", new Date().toTimeString());
+  }
+}
+Stamped.blotName = "stamp";
+Stamped.tagName = "p";
+
 type JournalEditorProps = {
   value: string;
   setValue: (
@@ -37,6 +64,7 @@ type JournalEditorProps = {
   save: () => void;
   toggleMind?: () => void;
   scrollToBottom: () => void;
+  editorRef: RefObject<ReactQuill>;
 };
 
 export default function JournalEditor({
@@ -45,9 +73,10 @@ export default function JournalEditor({
   handleKeyPress,
   save,
   scrollToBottom,
+  editorRef,
 }: // toggleMind,
 JournalEditorProps) {
-  const quillRef = useRef<ReactQuill>(null);
+  // const editorRef = useRef<ReactQuill>(null);
   const { setTheme } = useTheme();
   const [showMenu, setShowMenu] = useState(false);
   const [filtered, setFiltered] = useState<string | null>(null);
@@ -136,19 +165,20 @@ JournalEditorProps) {
     const init = async (quill: ReactQuill) => {
       quill.focus();
       if (quill?.editor) {
+        ReactQuill.Quill.register(Stamped);
         const lastIndex = quill.editor.getText().length;
         quill.editor.setSelection({ index: lastIndex, length: 0 });
       }
     };
     const check = () => {
-      if (quillRef.current) {
-        init(quillRef.current);
+      if (editorRef.current) {
+        init(editorRef.current);
         return;
       }
       setTimeout(check, 200);
     };
     check();
-  }, [quillRef]);
+  }, [editorRef]);
 
   useEffect(() => {
     if (filtered === null) {
@@ -160,16 +190,16 @@ JournalEditorProps) {
 
   function formatAsTodo(range: Range) {
     if (range) {
-      const ed = quillRef?.current?.getEditor();
+      const ed = editorRef?.current?.getEditor();
       console.log("formatting");
       ed?.formatLine(range.index, 1, { list: "unchecked" });
     }
   }
 
   function insertTodo(range: Range) {
-    // if (!range) range = quillRef?.current?.getSelection();
+    // if (!range) range = editorRef?.current?.getSelection();
     if (range) {
-      const ed = quillRef?.current?.getEditor();
+      const ed = editorRef?.current?.getEditor();
       ed?.deleteText(range.index - 1, 1);
       ed?.formatLine(range.index - 1, 1, { list: "unchecked" });
     }
@@ -177,9 +207,8 @@ JournalEditorProps) {
 
   function closeMenu() {
     setShowMenu(false);
-    quillRef?.current?.focus();
+    editorRef?.current?.focus();
   }
-  console.log(showMenu);
   return (
     <>
       <ReactQuill
@@ -191,7 +220,7 @@ JournalEditorProps) {
         scrollingContainer={"#scrolling-container"}
         onKeyUp={handleKeyPress}
         modules={modules}
-        ref={quillRef}
+        ref={editorRef}
       />
       {showMenu && (
         <ShortMenu

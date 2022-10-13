@@ -25,18 +25,18 @@
       dark:bg-blue-900 hover:dark:bg-blue-800;
   }
   .bg-primary {
-    @apply bg-green-900 dark:bg-green-700;
+    @apply bg-green-900 dark:bg-blue-900 text-gray-50;
   }
   .border-primary {
-    @apply border border-green-900 dark:border-green-700;
+    @apply border border-green-900 dark:border-blue-900;
   }
   .pattern-dark {
-    background-image: url("/patterns/black_linen_v2.png");
+    background-image: url("/patterns/zwartevilt.png");
     background-blend-mode: normal;
   }
   .pattern-light {
-    background-image: url("/patterns/whitey.png");
-    background-color: wheat;
+    background-image: url("/patterns/handmadepaper.png");
+    background-color: lightyellow;
     background-blend-mode: multiply;
   }
   .bg-main {
@@ -54,6 +54,18 @@
   }
   .h-half-screen {
     height: 50vh;
+  }
+  .shortcuts b {
+    @apply font-mono;
+  }
+  .shortcuts li:not(:last-child) {
+    @apply flex justify-between;
+  }
+  .light-glow {
+    text-shadow: 0px 0px 15px rgb(24, 204, 15);
+  }
+  .dark-glow {
+    text-shadow: 0px 0px 10px rgb(255, 255, 200);
   }
 }
 body {
@@ -96,7 +108,14 @@ body {
   content: "\2E3A";
   font-size: 1.5rem;
 } */
-
+.ql-editor ul[data-checked] {
+  @apply text-2xl;
+}
+.ql-editor ul[data-checked="true"] {
+  text-decoration: line-through;
+  opacity: 0.8;
+  text-shadow: none;
+}
 .ql-editor ul[data-checked="true"] li::before {
   content: "\2713";
   font-size: 1.5rem;

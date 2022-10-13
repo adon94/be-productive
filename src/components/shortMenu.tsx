@@ -18,12 +18,17 @@ type Props = {
 function MenuItem(props: ButtonHTMLAttributes<HTMLElement>) {
   return (
     <button
-      className="w-full block px-4 py-2 text-lg text-left font-uncial-antiqua
-        focus:bg-primary focus:outline-none focus:text-white"
+      className="w-full block px-4 py-2 mr-6 text-lg text-left dark:text-gray-50 font-mono
+        group focus:bg-primary focus:outline-none"
       role="menuitem"
       tabIndex={-1}
       {...props}
-    ></button>
+    >
+      {props.children}
+      <span className="opacity-0 group-focus:opacity-100 w-5 h-5 float-right">
+        ⏎
+      </span>
+    </button>
   );
 }
 
@@ -119,7 +124,7 @@ export default function ShortMenu({
     >
       {!showHelp ? (
         <div
-          className="z-10 w-1/4
+          className="z-10
         bg-main border-primary rounded-md
         ring-1 ring-black ring-opacity-5 focus:outline-none"
           role="menu"
@@ -137,7 +142,7 @@ export default function ShortMenu({
             </MenuItem> */}
             <MenuItem onClick={filterToDos} id="menu-item-1">
               {filtered === "actionable"
-                ? "Show Everything"
+                ? "Remove filters"
                 : "Filter Actionable"}
             </MenuItem>
             <MenuItem onClick={() => setShowHelp(true)} id="menu-item-2">
@@ -150,34 +155,34 @@ export default function ShortMenu({
         </div>
       ) : (
         <div
-          className="h-2/3 w-2/3 border bg-main
+          className="w-2/3 border bg-main
             border-primary text-lg p-10 font-mono"
         >
-          mind drop is designed to be used without a mouse 🎉
-          <br />
-          try these shortcuts:
+          Mind Drop is designed to be used without a mouse.
           <br />
           <br />
-          <ul>
+          Try these shortcuts:
+          <br />
+          <br />
+          <ul className="px-2 shortcuts">
             <li>
-              <b>cmd</b>+<b>.</b> - show menu
+              <b>[cmd+.]</b> - Show Menu
             </li>
             {/* <li>
               <b>cmd+s</b> - save locally (saves automatically after 3 seconds)
             </li> */}
             <li>
-              <b>cmd</b>+<b>d</b> - toggle darkmode
+              <b>[cmd+d]</b> - Toggle Darkmode
             </li>
             <li>
-              <b>cmd</b>+<b>g</b> - add highlighted text to Google Calendar
+              <b>[cmd+g]</b> - Add Highlighted Text to Google Calendar
             </li>
             <li>
-              <b>esc</b> - close this window
+              <b>[esc]</b> - Back to Writing
             </li>
             <br />
             <li>
-              start a newline with <b>&gt;</b>+<b>space</b> to create an action
-              item.
+              start a newline with <b>[&gt;+space]</b> to create an action item.
             </li>
           </ul>
         </div>
