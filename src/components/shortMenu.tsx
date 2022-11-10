@@ -148,7 +148,7 @@ export default function ShortMenu({
           className="w-2/3 border bg-main
             border-primary text-lg p-10 font-mono"
         >
-          Mind Drop is designed to be used without a mouse.
+          Promptly is designed to be used without a mouse!
           <br />
           <br />
           Try these shortcuts:
