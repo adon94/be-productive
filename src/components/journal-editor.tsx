@@ -1,5 +1,12 @@
 // import dynamic from "next/dynamic";
-import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTheme } from "next-themes";
 import { useHotkeys } from "react-hotkeys-hook";
 import ReactQuill, { Quill, Range } from "react-quill";
@@ -31,7 +38,7 @@ class Stamped extends Inline {
   static create() {
     const node = super.create();
     node.setAttribute("updated", new Date().toTimeString());
-    console.log(new Date().toTimeString());
+    // console.log(new Date().toTimeString());
     return node;
   }
 
@@ -39,13 +46,13 @@ class Stamped extends Inline {
     // We will only be called with a node already
     // determined to be a Link blot, so we do
     // not need to check ourselves
-    console.log("node", node);
+    // console.log("node", node);
     // return node.setAttribute("updated", new Date().toTimeString());
     // console.log("node", node);
     return node.getAttribute("updated");
   }
   format() {
-    console.log("domNode");
+    // console.log("domNode");
     this.domNode.setAttribute("updated", new Date().toTimeString());
   }
 }
@@ -62,7 +69,6 @@ type JournalEditorProps = {
   ) => void;
   handleKeyPress?: (arg0: KeyboardEvent) => void;
   save: () => void;
-  toggleMind?: () => void;
   scrollToBottom: () => void;
   editorRef: RefObject<ReactQuill>;
 };
@@ -74,14 +80,12 @@ export default function JournalEditor({
   save,
   scrollToBottom,
   editorRef,
-}: // toggleMind,
-JournalEditorProps) {
-  // const editorRef = useRef<ReactQuill>(null);
+}: JournalEditorProps) {
   const { setTheme } = useTheme();
   const [showMenu, setShowMenu] = useState(false);
   const [filtered, setFiltered] = useState<string | null>(null);
   const selRef = useRef<string | null>(null);
-  useHotkeys("command+.", () => {
+  useHotkeys("/", () => {
     if (showMenu) closeMenu();
     else setShowMenu(true);
   });
@@ -94,6 +98,18 @@ JournalEditorProps) {
     const theme = localStorage.getItem("theme");
     setTheme(theme === "dark" ? "light" : "dark");
   });
+
+  const insertTodo = useCallback(
+    (range: Range) => {
+      if (range) {
+        const ed = editorRef?.current?.getEditor();
+        ed?.deleteText(range.index - 1, 1);
+        ed?.formatLine(range.index - 1, 1, { list: "unchecked" });
+      }
+    },
+    [editorRef]
+  );
+
   const modules = useMemo(() => {
     return {
       toolbar: false,
@@ -137,8 +153,7 @@ JournalEditorProps) {
             },
           },
           shortMenu: {
-            key: 190,
-            shortKey: true,
+            key: 191,
             handler: () => {
               setShowMenu(true);
             },
@@ -146,7 +161,7 @@ JournalEditorProps) {
         },
       },
     };
-  }, [setTheme, save]);
+  }, [setTheme, save, insertTodo]);
 
   function markHighlighted(
     range: Range,
@@ -191,17 +206,7 @@ JournalEditorProps) {
   function formatAsTodo(range: Range) {
     if (range) {
       const ed = editorRef?.current?.getEditor();
-      console.log("formatting");
       ed?.formatLine(range.index, 1, { list: "unchecked" });
-    }
-  }
-
-  function insertTodo(range: Range) {
-    // if (!range) range = editorRef?.current?.getSelection();
-    if (range) {
-      const ed = editorRef?.current?.getEditor();
-      ed?.deleteText(range.index - 1, 1);
-      ed?.formatLine(range.index - 1, 1, { list: "unchecked" });
     }
   }
 
@@ -217,10 +222,10 @@ JournalEditorProps) {
         onChange={setValue}
         onChangeSelection={markHighlighted}
         placeholder={placeholder}
-        scrollingContainer={"#scrolling-container"}
         onKeyUp={handleKeyPress}
         modules={modules}
         ref={editorRef}
+        scrollingContainer="html"
       />
       {showMenu && (
         <ShortMenu

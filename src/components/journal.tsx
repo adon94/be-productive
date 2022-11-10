@@ -4,7 +4,7 @@ import router from "next/router";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
-import ReactQuill, { UnprivilegedEditor } from "react-quill";
+import ReactQuill from "react-quill";
 
 const JournalEditor = dynamic(() => import("./journal-editor"), { ssr: false });
 
@@ -23,6 +23,7 @@ export default function Journal({
   scrollToBottom,
 }: JournalProps) {
   const editorRef = useRef<ReactQuill | null>(null);
+  const editorHeightRef = useRef<number>(0);
   const [value, setValue] = useState("");
   const [lastValue, setLastValue] = useState("");
   const [spellcheck, setSpellcheck] = useState(true);
@@ -104,42 +105,45 @@ export default function Journal({
     return () => clearTimeout(timer);
   }, [jData, lastValue, mutate, value, localStorage, saveDoc]);
 
-  function onEditorChange(
-    content: string
-    // delta: unknown,
-    // source: unknown,
-    // unprivelagedEditor: UnprivilegedEditor
-  ) {
-    if (window && spellcheck) {
-      // editorRef.current = editor;
-      const editorEl = window.document.querySelector(".ql-editor");
-      editorEl?.setAttribute("spellcheck", "false");
-      setSpellcheck(false);
-    }
-    // console.log(editor.getSelection());
-    // console.log(delta);
-    // console.log(content);
-    const editor = editorRef?.current?.getEditor();
-    const range = editorRef?.current?.getEditorSelection();
-    if (range && editor) {
-      // editor?.formatLine(range.index, 1, { inline: "stamp" });
-      console.log("selected", editor.getLine(range.index)[0]);
-      // console.log(unprivelagedEditor.getHTML());
-      // Ok so we gonna add a 'updated' attribute to the current element
-      // I think there was a way to get the current selection as an element...
-    }
-    setValue(content);
-    saved && setSaved(false);
+  function disableSpellcheck() {
+    const editorEl = window.document.querySelector(".ql-editor");
+    editorEl?.setAttribute("spellcheck", "false");
+    setSpellcheck(false);
   }
 
-  function toggleMind() {
-    const editorEl = window.document.querySelector(".ql-editor");
-    if (editorEl?.classList.contains("hidden-mind")) {
-      editorEl.classList.remove("hidden-mind");
-      scrollToBottom();
-    } else {
-      editorEl?.classList.add("hidden-mind");
+  function followCursor() {
+    if (editorRef.current) {
+      const range = editorRef.current.getEditorSelection();
+      if (range) {
+        const { index } = range;
+        const height =
+          editorRef.current?.unprivilegedEditor?.getBounds(index).top;
+        if (height && height > editorHeightRef.current) {
+          window.scrollBy(0, 35);
+          editorHeightRef.current = height;
+        } else if (!editorHeightRef.current && height) {
+          editorHeightRef.current = height;
+        }
+      }
     }
+  }
+
+  function onEditorChange(content: string) {
+    if (window && spellcheck) {
+      disableSpellcheck();
+    }
+    followCursor();
+    // const editor = editorRef?.current?.getEditor();
+    // const range = editorRef?.current?.getEditorSelection();
+    // if (range && editor) {
+    //   // editor?.formatLine(range.index, 1, { inline: "stamp" });
+    //   console.log("selected", editor.getLine(range.index)[0]);
+    //   // console.log(unprivelagedEditor.getHTML());
+    //   // Ok so we gonna add a 'updated' attribute to the current element
+    //   // I think there was a way to get the current selection as an element...
+    // }
+    setValue(content);
+    saved && setSaved(false);
   }
 
   return (
@@ -155,7 +159,7 @@ export default function Journal({
         )}
       </div>
       <div className="fixed right-5 bottom-5 h-4">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">⌘+.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">/</p>
         {/* {isLoading && (
           <CogIcon className="animate-spin text-gray-700 dark:text-gray-400 w-5 h-5" />
         )} */}
@@ -167,7 +171,6 @@ export default function Journal({
           setValue={onEditorChange}
           handleKeyPress={handleKeyPress}
           save={saveDoc}
-          toggleMind={toggleMind}
           scrollToBottom={scrollToBottom}
         />
       </div>

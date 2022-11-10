@@ -33,24 +33,13 @@ const Write: NextPage = () => {
     }
   }
 
-  function handleKeyPress(e: KeyboardEvent) {
-    if (e.key === "Enter") {
-      window.scrollBy(0, 34.078);
-    }
-  }
   return (
-    <>
-      <Layout>
-        <div className="flex flex-col items-center w-full">
-          <Journal
-            // jData={res?.data}
-            handleKeyPress={handleKeyPress}
-            scrollToBottom={scrollToBottom}
-          />
-          <div ref={bottom} className="h-2 mx-auto" />
-        </div>
-      </Layout>
-    </>
+    <Layout>
+      <div className="flex flex-col items-center w-full">
+        <Journal scrollToBottom={scrollToBottom} />
+        <div ref={bottom} className="h-2 mx-auto" />
+      </div>
+    </Layout>
   );
 };
 

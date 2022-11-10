@@ -25,10 +25,10 @@
       dark:bg-blue-900 hover:dark:bg-blue-800;
   }
   .bg-primary {
-    @apply bg-green-900 dark:bg-blue-900 text-gray-50;
+    @apply bg-blue-900 dark:bg-blue-900 text-gray-50;
   }
   .border-primary {
-    @apply border border-green-900 dark:border-blue-900;
+    @apply border border-blue-900 dark:border-blue-900;
   }
   .pattern-dark {
     background-image: url("/patterns/zwartevilt.png");
@@ -36,11 +36,9 @@
   }
   .pattern-light {
     background-image: url("/patterns/handmadepaper.png");
-    background-color: lightyellow;
-    background-blend-mode: multiply;
   }
   .bg-main {
-    @apply bg-yellow-50 pattern-light text-black/75
+    @apply bg-white pattern-light text-black/75
     dark:bg-black dark:pattern-dark dark:text-gray-50;
   }
   .btn-vibe {
@@ -78,8 +76,8 @@ body {
   overflow-x: visible;
 }
 .ql-container {
-  @apply font-indie-flower text-2xl text-black/75 dark:text-gray-50
-  w-full h-full md:px-[15%];
+  @apply font-indie-flower text-2xl text-black/75 dark:text-white/90
+  w-full h-full md:px-[25%];
   overflow-x: visible;
   /* padding-left: 15%;
   padding-right: 15%; */
@@ -90,7 +88,7 @@ body {
   overflow-y: hidden;
 }
 .ql-editor.ql-blank::before {
-  @apply dark:text-gray-400 md:px-[15%];
+  @apply dark:text-gray-400 md:px-[25%];
   /* padding-left: 15%;
   padding-left: 15%; */
 }
@@ -124,6 +122,9 @@ body {
   @apply font-mono text-sm bg-white dark:bg-slate-700;
   border-radius: 0 !important;
   font-family: monospace !important;
+}
+.ql-clipboard {
+  position: fixed;
 }
 .hidden-mind p,
 .hidden-mind ul:not(ul[data-checked]) {

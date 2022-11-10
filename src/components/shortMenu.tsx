@@ -73,16 +73,6 @@ export default function ShortMenu({
               window.document.onkeydown = null;
               close();
               break;
-            case ".":
-              if (e.metaKey) {
-                e.preventDefault();
-                console.log("cmd+.");
-                if (showHelp) {
-                  setShowHelp(false);
-                } else if (visible) {
-                  close();
-                }
-              }
             default:
               break;
           }
